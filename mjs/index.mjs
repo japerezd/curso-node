@@ -1,6 +1,6 @@
 // .js -> por defecto utiliza CommonJS
 // .mjs -> para utilizar ES Modules
-// .cjs -> para utilizar CommonJS
+// .cjs -> para utilizar CommonJS (old/classic)
 
 import { sum, sub, mult } from './sum.mjs'
 

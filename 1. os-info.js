@@ -1,3 +1,4 @@
+// when is native from node js is recommended add node: before the module name
 const os = require('node:os')
 
 console.log('Información del Sistema Operativo:')
