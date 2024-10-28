@@ -12,7 +12,7 @@
 // });
 
 const fs = require('node:fs/promises');
-
+// Lee el directorio en el que se encuentra el folder/proyecto
 fs.readdir('.')
   .then((files) => {
     files.forEach((file) => {

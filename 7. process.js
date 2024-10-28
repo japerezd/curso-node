@@ -15,3 +15,8 @@ console.log(process.argv);
 // nos dice desde DONDE estamos ejecutando el proceso (depende desde que ruta estamos ejecutándolo)
 // no indica que estemos en este archivo
 console.log(process.cwd());
+
+// platform
+console.log(process.platform)
+
+console.log(process.env.PEPITO)
