@@ -7,4 +7,23 @@ GET http://localhost:1234/movies/9e6106f0-848b-4810-a11a-3d832a5610f9
 GET http://localhost:1234/movies?genre=action
 
 ### Recuperar peliculas por paginacion
-GET http://localhost:1234/movies?page=3
+GET http://localhost:1234/movies?limit=2
+
+### Recuperar todas las peliculas por genero y paginacion
+GET http://localhost:1234/movies?genre=drama&limit=2
+
+### Crear una pelicula con POST
+POST http://localhost:1234/movies
+Content-Type: application/json
+
+{
+  "title": "Forrest Gump",
+  "year": 1994,
+  "director": "Robert Zemeckis",
+  "duration": 142,
+  "poster": "https://i.ebayimg.com/images/g/qR8AAOSwkvRZzuMD/s-l1600.jpg",
+  "genre": [
+    "Drama",
+    "Romance"
+  ]
+}
