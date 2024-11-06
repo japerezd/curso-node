@@ -1,31 +1,47 @@
 const express = require('express')
 const crypto = require('node:crypto')
 const movies = require('./movies.json')
+const cors = require('cors')
 const { validateMovie, validatePartialMovie } = require('./schemas/movies')
 
 const app = express()
 // Middleware para obtener el body de la petición
 app.use(express.json())
+// Este usa por defecto el header Access-Control-Allow-Origin: *
+app.use(cors({
+  origin: (origin, cb) => {
+    const ACCEPTED_ORIGINS = [
+      'http://localhost:3000',
+      'http://localhost:8080',
+      'http://localhost:5500'
+    ]
+
+    if (ACCEPTED_ORIGINS.includes(origin)) {
+      return cb(null, true)
+    }
+
+    if (!origin) {
+      return cb(null, true)
+    }
+
+    return cb(new Error('Not allowed by CORS'))
+  }
+}))
 // deshabilita el header X-Powered-By: Express
 app.disable('x-powered-by')
 
 // métodos normales: GET/HEAD/POST
 // métodos complejos: PUT/PATCH/DELETE
- // Esos métodos usan CORS PRE-Flight
- // OPTIONS
+// Esos métodos usan CORS PRE-Flight
+// OPTIONS
 
-const ACCEPTED_ORIGINS = [
-  'http://localhost:3000',
-  'http://localhost:8080',
-  'http://localhost:5500'
-]
 // Todos los recursos que sean MOVIES se identifica con /movies
 app.get('/movies', (req, res) => {
   // const origin = req.headers.origin
-  const origin = req.header('origin')
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin) { 
-    res.header('Access-Control-Allow-Origin', origin)
-  }
+  // const origin = req.header('origin')
+  // if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
+  //   res.header('Access-Control-Allow-Origin', origin)
+  // }
 
   const { genre, limit } = req.query
   if (genre) {
@@ -34,7 +50,7 @@ app.get('/movies', (req, res) => {
     return res.json({ length: limitedMovies.length, ...limitedMovies })
   }
 
-  if (limit) { 
+  if (limit) {
     const limitedMovies = movies.slice(0, limit)
     return res.json({ length: limitedMovies.length, ...limitedMovies })
   }
@@ -62,19 +78,20 @@ app.post('/movies', (req, res) => {
   const newMovie = {
     id: crypto.randomUUID(), // uuid v4
     ...result.data
-  };
-  /*Esto no seria REST, porque estamos guardando 
+  }
+  /*
+    Esto no seria REST, porque estamos guardando
     el estado de la aplicación en memoria
   */
- movies.push(newMovie)
- res.status(201).json(newMovie)
+  movies.push(newMovie)
+  res.status(201).json(newMovie)
 })
 
 app.delete('/movies/:id', (req, res) => {
-  const origin = req.header('origin')
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin) { 
-    res.header('Access-Control-Allow-Origin', origin)
-  }
+  // const origin = req.header('origin')
+  // if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
+  //   res.header('Access-Control-Allow-Origin', origin)
+  // }
 
   const { id } = req.params
   const movieIndex = movies.findIndex(movie => movie.id === id)
@@ -87,12 +104,12 @@ app.delete('/movies/:id', (req, res) => {
   res.status(204).json({ message: 'Movie deleted' })
 })
 
-app.patch('/movies/:id', (req, res) => { 
+app.patch('/movies/:id', (req, res) => {
   const result = validatePartialMovie(req.body)
   if (!result.success) {
     return res.status(400).json({ error: JSON.parse(result.error.message) })
   }
-  
+
   const { id } = req.params
   const movieIndex = movies.findIndex(movie => movie.id === id)
 
@@ -109,15 +126,15 @@ app.patch('/movies/:id', (req, res) => {
 })
 
 // OPTIONS para métodos complejos: PUT/PATCH/DELETE
-app.options('/movies/:id', (req, res) => {
-  const origin = req.header('origin')
+// app.options('/movies/:id', (req, res) => {
+//   const origin = req.header('origin')
 
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
-    res.header('Access-Control-Allow-Origin', origin)
-    res.header('Access-Control-Allow-Methods', 'GET, PATCH, DELETE, PUT, POST')
-  }
-  res.sendStatus(200)
-})
+//   if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
+//     res.header('Access-Control-Allow-Origin', origin)
+//     res.header('Access-Control-Allow-Methods', 'GET, PATCH, DELETE, PUT, POST')
+//   }
+//   res.sendStatus(200)
+// })
 
 const PORT = process.env.PORT ?? 1234
 
