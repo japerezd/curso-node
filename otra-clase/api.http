@@ -1,0 +1,16 @@
+@hostname = http://localhost:1234
+### 
+
+GET {{hostname}}/users?limit=4
+
+
+{
+  "name": "Beto"
+}
+###
+POST {{hostname}}/users
+Content-Type: application/json
+
+{
+  "name": "Other"
+}
